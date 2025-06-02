@@ -1,0 +1,23 @@
+# permissions for end users to view pvcresizes.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: pvc-resizer-controller
+    app.kubernetes.io/managed-by: kustomize
+  name: pvcresize-viewer-role
+rules:
+- apiGroups:
+  - volume.makro.com
+  resources:
+  - pvcresizes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - volume.makro.com
+  resources:
+  - pvcresizes/status
+  verbs:
+  - get
