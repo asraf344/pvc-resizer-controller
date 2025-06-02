@@ -29,7 +29,15 @@ type PVCResizeSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of PVCResize. Edit pvcresize_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	Policies []PVCResizePolicy `json:"policies,omitempty"`
+}
+
+type PVCResizePolicy struct {
+	// Name of the PVC
+	Ref string `json:"ref"`
+
+	// Size of the pvc
+	Size string `json:"size"`
 }
 
 // PVCResizeStatus defines the observed state of PVCResize

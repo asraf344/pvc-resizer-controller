@@ -8,6 +8,9 @@
 *.so
 *.dylib
 
+#/bin dir not neede
+bin/
+
 # Test binary, built with `go test -c`
 *.test
 

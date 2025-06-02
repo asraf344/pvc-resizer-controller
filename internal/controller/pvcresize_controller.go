@@ -18,13 +18,16 @@ package controller
 
 import (
 	"context"
+	"time"
 
+	corev1 "k8s.io/api/core/v1"
+	resource "k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	volumev1alpha1 "github.com/makro/pvc-resizer-controller/api/v1alpha1"
+	v1alpha1 "github.com/makro/pvc-resizer-controller/api/v1alpha1"
 )
 
 // PVCResizeReconciler reconciles a PVCResize object
@@ -33,6 +36,8 @@ type PVCResizeReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+//+kubebuilder:rbac:namespace=system,groups="",resources=pvcs,verbs=get;list;update;watch
+//+kubebuilder:rbac:namespace=system,groups="",resources=events,verbs=create;patch
 // +kubebuilder:rbac:groups=volume.makro.com,resources=pvcresizes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=volume.makro.com,resources=pvcresizes/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=volume.makro.com,resources=pvcresizes/finalizers,verbs=update
@@ -47,16 +52,56 @@ type PVCResizeReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.0/pkg/reconcile
 func (r *PVCResizeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	logger := log.FromContext(ctx)
 
-	// TODO(user): your logic here
+	var pvcResize v1alpha1.PVCResize
+	err := r.Get(ctx, req.NamespacedName, &pvcResize)
+	if err != nil {
+		// pvcResize might be deleted
+		logger.Info("pvcResize deleted or not found", "name", req.NamespacedName)
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
 
-	return ctrl.Result{}, nil
+	logger.Info("Reconciling pvcResize", "name", pvcResize.Name)
+
+	err = r.resizePVC(ctx, req, pvcResize)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+
+	// For now Reconcile after 10s to check if the size changes at PVC, anyway
+	return ctrl.Result{RequeueAfter: time.Second * 10}, nil
+}
+
+func (r *PVCResizeReconciler) resizePVC(ctx context.Context, req ctrl.Request, pvcResize v1alpha1.PVCResize) error {
+	for _, policy := range pvcResize.Spec.Policies {
+		var pvc corev1.PersistentVolumeClaim
+
+		pvcKey := client.ObjectKey{Name: policy.Ref, Namespace: req.Namespace}
+		err := r.Client.Get(ctx, pvcKey, &pvc)
+		if err != nil {
+			return err
+		}
+
+		newSize := resource.MustParse(policy.Size)
+		// update the pvc only if size changes
+		if !pvc.Spec.Resources.Requests[corev1.ResourceStorage].Equal(newSize) {
+			pvc.Spec.Resources.Requests[corev1.ResourceStorage] = resource.MustParse(policy.Size)
+			// update pvc
+			err = r.Client.Update(ctx, &pvc)
+			if err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *PVCResizeReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&volumev1alpha1.PVCResize{}).
+		For(&v1alpha1.PVCResize{}).
 		Complete(r)
 }
