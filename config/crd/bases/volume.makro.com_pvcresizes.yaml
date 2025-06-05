@@ -14,7 +14,17 @@ spec:
     singular: pvcresize
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    - jsonPath: .status.pvNames
+      name: Persistent-Volumes
+      type: string
+    - jsonPath: .status.pvcNames
+      name: PVCs
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: PVCResize is the Schema for the pvcresizes API
@@ -116,6 +126,15 @@ spec:
                 type: array
               phase:
                 type: string
+              pvNames:
+                items:
+                  type: string
+                type: array
+              pvcNames:
+                description: Show the list of pvcs and pvs at the status
+                items:
+                  type: string
+                type: array
               pvcs:
                 items:
                   properties:

@@ -45,6 +45,13 @@ type PVCResizeStatus struct {
 	Phase string `json:"phase,omitempty"`
 	//+optional
 	Conditions []metav1.Condition `json:"conditions,omitempty"`
+
+	// Show the list of pvcs and pvs at the status
+	//+optional
+	PVCNames []string `json:"pvcNames"`
+
+	//+optional
+	PVNames []string `json:"pvNames"`
 }
 
 type ResizeStatus struct {
@@ -56,6 +63,9 @@ type ResizeStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+//+kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`
+//+kubebuilder:printcolumn:name="Persistent-Volumes",type=string,JSONPath=`.status.pvNames`
+//+kubebuilder:printcolumn:name="PVCs",type=string,JSONPath=`.status.pvcNames`
 
 // PVCResize is the Schema for the pvcresizes API
 type PVCResize struct {
