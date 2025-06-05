@@ -35,7 +35,6 @@ import (
 
 	"github.com/go-logr/logr"
 	v1alpha1 "github.com/makro/pvc-resizer-controller/api/v1alpha1"
-	utils "github.com/makro/pvc-resizer-controller/internal"
 )
 
 // PVCResizeReconciler reconciles a PVCResize object
@@ -215,7 +214,7 @@ func (r *PVCResizeReconciler) makeCompletedStatus() {
 	if !resizeInProgress {
 		r.State.Dirty = true
 		r.State.PVCResize.Status.Phase = "Completed"
-		r.State.PVCResize.Status.PVCs = utils.MapFunc(r.State.PVCResize.Spec.Policies, func(policy v1alpha1.PVCResizePolicy) v1alpha1.ResizeStatus {
+		r.State.PVCResize.Status.PVCs = MapFunc(r.State.PVCResize.Spec.Policies, func(policy v1alpha1.PVCResizePolicy) v1alpha1.ResizeStatus {
 			return v1alpha1.ResizeStatus{
 				PVCName:      policy.Ref,
 				PVName:       r.State.PVCs[policy.Ref].Spec.VolumeName,
@@ -224,11 +223,11 @@ func (r *PVCResizeReconciler) makeCompletedStatus() {
 			}
 		})
 
-		r.State.PVCResize.Status.PVCNames = utils.MapFunc(r.State.PVCResize.Status.PVCs, func(rs v1alpha1.ResizeStatus) string {
+		r.State.PVCResize.Status.PVCNames = MapFunc(r.State.PVCResize.Status.PVCs, func(rs v1alpha1.ResizeStatus) string {
 			return rs.PVCName
 		})
 
-		r.State.PVCResize.Status.PVNames = utils.MapFunc(r.State.PVCResize.Status.PVCs, func(rs v1alpha1.ResizeStatus) string {
+		r.State.PVCResize.Status.PVNames = MapFunc(r.State.PVCResize.Status.PVCs, func(rs v1alpha1.ResizeStatus) string {
 			return rs.PVName
 		})
 

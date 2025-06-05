@@ -1,4 +1,4 @@
-package utils
+package controller
 
 // MapFunc creates an array of values by running each element in the collection through the `iteratee`.
 // For example, if you want to get square of an array of numbers, we can use this as:
