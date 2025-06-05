@@ -53,3 +53,10 @@ rules:
   - list
   - update
   - watch
+- apiGroups:
+  - ""
+  resources:
+  - pvs
+  verbs:
+  - get
+  - list

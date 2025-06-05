@@ -1,4 +1,4 @@
 ## Append samples of your project ##
 resources:
 - volume_v1alpha1_pvcresize.yaml
-# +kubebuilder:scaffold:manifestskustomizesamples
+- pvc.yaml

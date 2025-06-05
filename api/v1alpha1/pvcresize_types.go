@@ -25,10 +25,7 @@ import (
 
 // PVCResizeSpec defines the desired state of PVCResize
 type PVCResizeSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of PVCResize. Edit pvcresize_types.go to remove/update
+	// Resizing policies
 	Policies []PVCResizePolicy `json:"policies,omitempty"`
 }
 
@@ -42,8 +39,19 @@ type PVCResizePolicy struct {
 
 // PVCResizeStatus defines the observed state of PVCResize
 type PVCResizeStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	//+optional
+	PVCs []ResizeStatus `json:"pvcs"`
+	//+optional
+	Phase string `json:"phase,omitempty"`
+	//+optional
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
+}
+
+type ResizeStatus struct {
+	PVCName      string `json:"pvcName"`
+	PVName       string `json:"pvName"`
+	ResizeStatus string `json:"ResizeStatus"`
+	Size         string `json:"size"`
 }
 
 // +kubebuilder:object:root=true

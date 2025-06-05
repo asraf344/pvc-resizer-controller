@@ -16,8 +16,20 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 3Gi
+      storage: 2Gi
   storageClassName: csi-hostpath-sc 
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: csi-pvc2
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+  storageClassName: csi-hostpath-sc   
 --- 
 apiVersion: v1
 kind: Pod

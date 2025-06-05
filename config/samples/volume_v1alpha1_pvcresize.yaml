@@ -8,4 +8,6 @@ metadata:
 spec:
   policies:
     - ref: csi-pvc1
-      size: 4Gi
+      size: 2Gi
+    - ref: csi-pvc2
+      size: 3Gi  
