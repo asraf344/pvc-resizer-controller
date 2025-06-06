@@ -62,12 +62,12 @@ type State struct {
 	Dirty bool
 }
 
-//+kubebuilder:rbac:namespace=system,groups="",resources=pvcs,verbs=get;list;update;watch
-//+kubebuilder:rbac:namespace=system,groups="",resources=pvs,verbs=get;list;
+//+kubebuilder:rbac:namespace=system,groups="",resources=persistentvolumeclaims,verbs=get;list;update;watch
+//+kubebuilder:rbac:groups="",resources=persistentvolumes,verbs=get;list;watch
 //+kubebuilder:rbac:namespace=system,groups="",resources=events,verbs=create;patch
-// +kubebuilder:rbac:groups=volume.makro.com,resources=pvcresizes,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=volume.makro.com,resources=pvcresizes/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=volume.makro.com,resources=pvcresizes/finalizers,verbs=update
+//+kubebuilder:rbac:namespace=system,groups=volume.makro.com,resources=pvcresizes,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:namespace=system,groups=volume.makro.com,resources=pvcresizes/status,verbs=get;update;patch
+//+kubebuilder:rbac:namespace=system,groups=volume.makro.com,resources=pvcresizes/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.

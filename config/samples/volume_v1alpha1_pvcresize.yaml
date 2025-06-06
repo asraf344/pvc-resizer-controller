@@ -4,10 +4,10 @@ metadata:
   labels:
     app.kubernetes.io/name: pvc-resizer-controller
     app.kubernetes.io/managed-by: kustomize
-  name: pvcresize-sample
+  name: sample1
 spec:
   policies:
     - ref: csi-pvc1
-      size: 3Gi
+      size: 5Gi
     - ref: csi-pvc2
       size: 3Gi  

@@ -1,11 +1,3 @@
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: csi-hostpath-sc
-provisioner: hostpath.csi.k8s.io
-reclaimPolicy: Delete
-volumeBindingMode: Immediate
-allowVolumeExpansion: true
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -16,7 +8,7 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 2Gi
+      storage: 1Gi
   storageClassName: csi-hostpath-sc 
 ---
 apiVersion: v1
@@ -28,22 +20,5 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 3Gi
+      storage: 2Gi
   storageClassName: csi-hostpath-sc   
---- 
-apiVersion: v1
-kind: Pod
-metadata:
-  name: csi-pod1
-spec:
-  containers:
-    - name: app
-      image: busybox
-      command: ["sleep", "3600"]
-      volumeMounts:
-        - mountPath: /data
-          name: csi-volume1
-  volumes:
-    - name: csi-volume1
-      persistentVolumeClaim:
-        claimName: csi-pvc1
